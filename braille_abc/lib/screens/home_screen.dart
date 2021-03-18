@@ -1,5 +1,7 @@
 import 'dart:ui';
-
+import 'package:braille_abc/components/help_widgets.dart';
+import 'package:braille_abc/models/help_model.dart';
+import 'package:braille_abc/screens/help_screen.dart';
 import 'package:braille_abc/components/bottom_bar_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +20,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreen extends State<HomeScreen> {
   @override
   void initState() {
+    HelpModel.fillHelpModel(context);
     super.initState();
   }
 
@@ -44,35 +47,41 @@ class MenuScreen extends StatelessWidget {
               children: [
                 Text(
                   "Меню",
-                  style: TextStyle(
-                      color: CupertinoColors.black,
-                      fontSize: 55,
-                      fontWeight: FontWeight.bold),
+                  style: TextStyle(color: CupertinoColors.black, fontSize: 55, fontWeight: FontWeight.bold),
                 ),
                 CupertinoButton(
                   child: Icon(
                     CupertinoIcons.question_circle,
+                    semanticLabel: "Справка",
                     size: ScreenParams.height(5, context),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    scakey.currentState.displayTapBar(false);
+                    Navigator.of(context).push(
+                      CupertinoPageRoute(
+                        builder: (context) => HelpScreen(
+                          helpWidget: MainMenuHelp(),
+                          previousPage: MenuScreen(),
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ],
             ),
             SizedBox(height: ScreenParams.height(4, context)),
             Container(
-              height: ScreenParams.heightIOS14(70, context),
+              height: ScreenParams.heightIOS14(80, context),
               child: GridView.count(
                 physics: new NeverScrollableScrollPhysics(),
-                childAspectRatio: (50 / 65),
+                childAspectRatio: (4.0 / 5.0),
                 mainAxisSpacing: ScreenParams.height(3, context),
                 crossAxisSpacing: ScreenParams.height(2, context),
                 crossAxisCount: 2,
                 children: <Widget>[
                   for (int i = 0; i < AppModel.menuButton.length; i++)
                     MenuButtonWidget(
-                      menuButton: MenuButton(
-                          name: AppModel.menuButton[i].name,
-                          icon: AppModel.menuButton[i].icon),
+                      menuButton: MenuButton(name: AppModel.menuButton[i].name, icon: AppModel.menuButton[i].icon),
                       index: i + 1,
                       homeScreen: HomeScreen(),
                     ),
