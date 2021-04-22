@@ -1,24 +1,29 @@
-import 'package:braille_abc/components/bottom_bar_widget.dart';
+import 'package:braille_abc/components/navigation_bar_widget.dart';
+import 'package:braille_abc/models/screen_model.dart';
+import 'package:braille_abc/shared/non_swipeable.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:braille_abc/models/app_names.dart';
 
-class SettingsScreen extends StatelessWidget {
+@immutable
+class SettingsScreen extends NavigationScreen {
+  const SettingsScreen({
+    Key key,
+    Widget helpPage,
+    Widget previousPage,
+  }) : super(key: key, helpPage: helpPage, previousPage: previousPage);
+
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(
-        leading: CupertinoNavigationBarBackButton(
-          onPressed: () {
-            scakey.currentState.onItemTapped(0);
-          },
+    return nonSwipeable(
+      context,
+      CupertinoPageScaffold(
+        navigationBar: NavigationBar(
+          currentPage: this,
+          title: ScreenNames.getName(ScreenType.Settings),
         ),
-        middle: Text(
-          "Настройки",
-          style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+        child: SafeArea(
+          child: Center(child: Text('Раздел в разработке...')),
         ),
-        trailing: Icon(CupertinoIcons.question_circle),
-      ),
-      child: SafeArea(
-        child: Center(child: Text('settings')),
       ),
     );
   }

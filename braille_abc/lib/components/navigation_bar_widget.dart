@@ -1,80 +1,79 @@
 import 'dart:async';
-import 'package:auto_size_text/auto_size_text.dart';
-import 'package:braille_abc/models/app_model.dart';
-import 'package:braille_abc/screens/help_screen.dart';
-import 'package:flutter/cupertino.dart';
-import 'bottom_bar_widget.dart';
 
+import 'package:braille_abc/style.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:auto_size_text/auto_size_text.dart';
+
+import 'package:braille_abc/models/app_icons.dart';
+import 'package:braille_abc/screens/help_screen.dart';
+import 'package:braille_abc/components/bottom_bar_widget.dart';
+import 'package:braille_abc/models/app_names.dart';
+import 'package:braille_abc/models/screen_model.dart';
+
+@immutable
 class NavigationBar extends StatelessWidget implements ObstructingPreferredSizeWidget {
   const NavigationBar({
     Key key,
     @required this.title,
-    @required this.previousPage,
-    @required this.helpPage,
     this.currentPage,
   }) : super(key: key);
 
   final String title;
-  final Widget previousPage;
-  final Widget helpPage;
-  final Widget currentPage;
+  final Screen currentPage;
 
-  bool displayBottomBar(Widget screen) => AppModel.screens.toString().contains(screen.toString());
+  //bool displayBottomBar(Widget screen) => AppModel.navigationScreens.toString().contains(screen.toString());
 
   @override
   Widget build(BuildContext context) {
     return CupertinoNavigationBar(
-      backgroundColor: CupertinoColors.extraLightBackgroundGray,
+      backgroundColor: AppColors.navigationBar,
       leading: Semantics(
-        label: "Назад",
-        child: CupertinoNavigationBarBackButton(
-          onPressed: () {
-            if (displayBottomBar(currentPage)) {
-              scakey.currentState.onItemTapped(0);
-            } else {
-              if (displayBottomBar(previousPage)) {
-                Timer(Duration(milliseconds: 10), () {
-                  scakey.currentState.displayTapBar(true);
-                });
+        label: SemanticNames.getName(SemanticsType.Back),
+        child: ExcludeSemantics(
+          child: CupertinoNavigationBarBackButton(
+            onPressed: () {
+              if (currentPage.hasNavigationBar) {
+                scakey.currentState.onItemTapped(0);
+              } else {
+                if (currentPage.previousPage.hasNavigationBar) {
+                  Timer(Duration(milliseconds: 10), () {
+                    scakey.currentState.displayTapBar(true);
+                  });
+                }
+                Navigator.push(context, CupertinoPageRoute(builder: (context) => currentPage.previousPage));
               }
-              Navigator.push(context, CupertinoPageRoute(builder: (context) => previousPage));
-            }
-          },
+            },
+          ),
         ),
       ),
-      middle:
-      AutoSizeText(
+      middle: AutoSizeText(
         title,
-        style: TextStyle(color: CupertinoColors.black, fontSize: 25, fontWeight: FontWeight.bold),
+        style: TextStyle(color: AppColors.navigationBarText, fontSize: 25, fontWeight: FontWeight.bold),
       ),
-      trailing: this.helpPage != null
+      trailing: currentPage.helpPage != null
           ? CupertinoButton(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 10,
-              ),
-              child: Icon(CupertinoIcons.question_circle, semanticLabel: "Справка", size: 35),
-              onPressed: () {
-                Timer(Duration(milliseconds: 10), () {
-                  scakey.currentState.displayTapBar(false);
-                });
-                Navigator.push(
-                    context,
-                    CupertinoPageRoute(
-                        builder: (context) => HelpScreen(
-                              helpWidget: helpPage,
-                              previousPage: currentPage,
-                            )));
-              },
-            )
+        padding: const EdgeInsets.symmetric(
+          horizontal: 10,
+        ),
+        onPressed: () {
+          Timer(Duration(milliseconds: 10), () {
+            scakey.currentState.displayTapBar(false);
+          });
+          Navigator.push(
+              context,
+              CupertinoPageRoute(
+                  builder: (context) =>
+                      HelpScreen(currentHelp: currentPage.helpPage, previousPage: currentPage)));
+        },
+        child: Icon(AppIcon.getIcon(AppIcons.HelpScreen), semanticLabel: ScreenNames.getName(ScreenType.Help), size: 35),
+      )
           : null,
     );
   }
 
   @override
-  // TODO: убрать это магическое число мб
-
   Size get preferredSize {
-    return new Size.fromHeight(20.0);
+    return  Size.fromHeight(20.0);
   }
 
   @override

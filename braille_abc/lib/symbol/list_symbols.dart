@@ -1,13 +1,15 @@
 import 'package:braille_abc/components/study_item_widget.dart';
-import 'struct_symbol.dart';
+import 'package:braille_abc/models/app_names.dart';
+import 'package:braille_abc/symbol/struct_symbol.dart';
+import 'package:flutter/cupertino.dart';
 
-
+@immutable
 class SymbolsFactory {
   SymbolsFactory();
 
-  List<Symbol> createSymbolsGroup(final String groupName) {
+  List<Symbol> createSymbolsGroup(SectionType groupName) {
     switch (groupName) {
-      case "Русский алфавит":
+      case SectionType.RussianSymbols:
         {
           List<Symbol> russian = <Symbol>[
             RussianSymbol(list: Search.imageSymbol(d: <int>[1]), char: "А"),
@@ -47,42 +49,43 @@ class SymbolsFactory {
           return russian;
         }
         break;
-      case "Знаки препинания":
+      case SectionType.PunctuationSymbols:
         {
           List<Symbol> punctuationMarks = <Symbol>[
-            PunctuationSymbol(list: Search.imageSymbol(d: <int>[2]), char: "Запятая"),
-            PunctuationSymbol(list: Search.imageSymbol(d: <int>[3, 6]), char: "Дефис"),
-            PunctuationSymbol(list: Search.imageSymbol(d: <int>[2, 5, 6]), char: "Точка"),
-            PunctuationSymbol(list: Search.imageSymbol(d: <int>[2, 3, 5]), char: "Восклицательный знак"),
-            PunctuationSymbol(list: Search.imageSymbol(d: <int>[2, 6]), char: "Вопросительный знак"),
-            PunctuationSymbol(list: Search.imageSymbol(d: <int>[2, 3, 6]), char: "Открывающая кавычка"),
-            PunctuationSymbol(list: Search.imageSymbol(d: <int>[3, 5, 6]), char: "Закрывающая кавычка"),
-            PunctuationSymbol(list: Search.imageSymbol(d: <int>[1, 2, 6]), char: "Левая литеральная скобка"),
-            PunctuationSymbol(list: Search.imageSymbol(d: <int>[3, 4, 5]), char: "Правая литеральная скобка"),
-            PunctuationSymbol(list: Search.imageSymbol(d: <int>[3, 5]), char: "Звёздочка"),
-            PunctuationSymbol(list: Search.imageSymbol(d: <int>[2, 5]), char: "Двоеточие"),
-            PunctuationSymbol(list: Search.imageSymbol(d: <int>[2, 3]), char: "Точка с запятой"),
-            PunctuationSymbol(list: Search.imageSymbol(d: <int>[4]), char: "Ударение"),
+            PunctuationSymbol(list: Search.imageSymbol(d: <int>[2]), char: "Запятая", shortChar: ","),
+            PunctuationSymbol(list: Search.imageSymbol(d: <int>[3, 6]), char: "Дефис", shortChar: "-"),
+            PunctuationSymbol(list: Search.imageSymbol(d: <int>[2, 5, 6]), char: "Точка", shortChar: "."),
+            PunctuationSymbol(list: Search.imageSymbol(d: <int>[2, 3, 5]), char: "Восклицательный знак", shortChar: "!"),
+            PunctuationSymbol(list: Search.imageSymbol(d: <int>[2, 6]), char: "Вопросительный знак", shortChar: "?"),
+            PunctuationSymbol(list: Search.imageSymbol(d: <int>[2, 3, 6]), char: "Открывающая кавычка", shortChar: "«"),
+            PunctuationSymbol(list: Search.imageSymbol(d: <int>[3, 5, 6]), char: "Закрывающая кавычка", shortChar: "»"),
+            PunctuationSymbol(list: Search.imageSymbol(d: <int>[1, 2, 6]), char: "Левая литеральная скобка", shortChar: "("),
+            PunctuationSymbol(list: Search.imageSymbol(d: <int>[3, 4, 5]), char: "Правая литеральная скобка", shortChar: ")"),
+            PunctuationSymbol(list: Search.imageSymbol(d: <int>[3, 5]), char: "Звёздочка", shortChar: "*"),
+            PunctuationSymbol(list: Search.imageSymbol(d: <int>[2, 5]), char: "Двоеточие", shortChar: ":"),
+            PunctuationSymbol(list: Search.imageSymbol(d: <int>[2, 3]), char: "Точка с запятой", shortChar: ";"),
+            PunctuationSymbol(list: Search.imageSymbol(d: <int>[4]), char: "Ударение", shortChar: "'"),
           ];
           return punctuationMarks;
         }
         break;
 
-      case "Арифметические знаки":
+      case SectionType.ArithmeticSymbols:
         {
           List<Symbol> arithmeticSigns = <Symbol>[
-            ArithmeticSymbol(list: Search.imageSymbol(d: <int>[2, 3, 5]), char: "Знак Плюс"),
-            ArithmeticSymbol(list: Search.imageSymbol(d: <int>[3, 6]), char: "Знак Минус"),
-            ArithmeticSymbol(list: Search.imageSymbol(d: <int>[3]), char: "Знак умножения точкой"),
-            ArithmeticSymbol(list: Search.imageSymbol(d: <int>[2, 3, 6]), char: "Знак умножения крестом"),
-            ArithmeticSymbol(list: Search.imageSymbol(d: <int>[3, 5, 6]), char: "Знак деления (углом)"),
-            ArithmeticSymbol(list: Search.imageSymbol(d: <int>[2, 5, 6]), char: "Знак деления (двумя точками)"),
-            ArithmeticSymbol(list: Search.imageSymbol(d: <int>[2, 3, 5, 6]), char: "Знак равества"),
+            ArithmeticSymbol(list: Search.imageSymbol(d: <int>[2, 3, 5]), char: "Знак Плюс",shortChar: "+" ),
+            ArithmeticSymbol(list: Search.imageSymbol(d: <int>[3, 6]), char: "Знак Минус", shortChar: "-"),
+            ArithmeticSymbol(list: Search.imageSymbol(d: <int>[3]), char: "Знак умножения точкой", shortChar: "⋅"),
+            ArithmeticSymbol(list: Search.imageSymbol(d: <int>[2, 3, 6]), char: "Знак умножения крестом", shortChar: "х"),
+            ArithmeticSymbol(list: Search.imageSymbol(d: <int>[3, 5, 6]), char: "Знак деления (углом)", shortChar: "/"),
+            ArithmeticSymbol(list: Search.imageSymbol(d: <int>[2, 5, 6]), char: "Знак деления (двумя точками)", shortChar: ":"),
+            ArithmeticSymbol(list: Search.imageSymbol(d: <int>[2, 3, 5, 6]), char: "Знак равества", shortChar: "="),
           ];
           return arithmeticSigns;
         }
         break;
-      case "Цифры":
+
+      case SectionType.Numbers:
         {
           List<Symbol> numbers = <Symbol>[
             Number(list: Search.imageSymbol(d: <int>[1]), char: "1"),
@@ -99,7 +102,7 @@ class SymbolsFactory {
           return numbers;
         }
         break;
-      case "Признаки":
+      case SectionType.Signs:
         {
           List<Symbol> signs = <Symbol>[
             Sign(list: Search.imageSymbol(d: <int>[3, 4, 5, 6]), char: "Цифровой знак"),
@@ -117,48 +120,46 @@ class SymbolsFactory {
   }
 }
 
+@immutable
 class Alphabet {
+  static Map<SectionType, List<Symbol>> _alphabet;
+
   Alphabet() {
     if (_alphabet == null) {
-      final List<String> tokens = <String>[
-        "Русский алфавит",
-        "Знаки препинания",
-        "Арифметические знаки",
-        "Цифры",
-        "Признаки",
-      ];
       SymbolsFactory factory = SymbolsFactory();
       _alphabet = Map();
-      for (var token in tokens) {
+      for (var token in SectionNames.stringOfSectionsMap.keys) {
         _alphabet[token] = factory.createSymbolsGroup(token);
       }
     }
   }
 
-  List<Symbol> listOfSymbols(String key) {
+  List<Symbol> listOfSymbols(SectionType key) {
     if (_alphabet.containsKey(key)) {
       return _alphabet[key];
     }
     return null;
   }
 
-  List<StudyItem> listOfStudyItems(String key) {
+  List<StudyItem> listOfStudyItems(SectionType key, bool fullName) {
     List<StudyItem> lsi = [];
     List<Symbol> los = listOfSymbols(key);
     for (var symbol in los) {
       if (symbol.char != null) {
-        lsi.add(StudyItem(
-            symbol: symbol, titleSymbol: symbol.ofGroup()));
+        if(fullName) {
+          lsi.add(StudyItem(symbol: symbol, sectionName: key));
+        } else{
+          lsi.add(StudyItem(symbol: symbol, sectionName: key));
+        }
       }
     }
     return lsi;
   }
-
-  static Map<String, List<Symbol>> _alphabet;
 }
 
+@immutable
 class Search {
-  static Symbol element(String ch, String keymap) {
+  static Symbol element(String ch, SectionType keymap) {
     Alphabet alphabet = Alphabet();
     List<Symbol> list = alphabet.listOfSymbols(keymap);
 

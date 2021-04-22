@@ -1,13 +1,17 @@
+import 'package:braille_abc/style.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'package:braille_abc/models/app_names.dart';
+
+@immutable
 class ExpansionSection extends StatefulWidget {
-  ExpansionSection({
+  const ExpansionSection({
     Key key,
     this.sectionIcon = CupertinoIcons.add,
     this.sectionName,
     this.child,
-    this.color = CupertinoColors.white,
+    this.color = AppColors.second,
   }) : super(key: key);
 
   final IconData sectionIcon;
@@ -20,37 +24,38 @@ class ExpansionSection extends StatefulWidget {
 }
 
 class _ExpansionSection extends State<ExpansionSection> {
-  Color myColor = Colors.white;
+  Color myColor = AppColors.second;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 2),
-      decoration: new BoxDecoration(
-          color: Colors.orangeAccent, //new Color.fromRGBO(255, 0, 0, 0.0),
-          borderRadius: new BorderRadius.circular(10)),
-      child: ExpansionTile(
-        onExpansionChanged: (expanded) {
-          setState(() {
-            if (expanded) {
-              myColor = Colors.orangeAccent;
-            } else {
-              myColor = Colors.white;
-            }
-          });
-        },
-        leading: Icon(
-          widget.sectionIcon,
-          size: 35,
-          color: myColor,
-        ),
-        title: Text(
-          widget.sectionName,
-          style: TextStyle(fontSize: 23, color: myColor),
-        ),
-        children: <Widget>[widget.child],
-        backgroundColor: CupertinoColors.tertiarySystemBackground,
-      ),
-    );
+    return Semantics(
+        button: false,
+        hint: SemanticNames.getName(SemanticsType.ExpandableList) + SemanticNames.getName(SemanticsType.TapToOpen),
+        child: Container(
+          margin: EdgeInsets.symmetric(vertical: 2),
+          decoration: AppDecorations.expansionSection,
+          child: ExpansionTile(
+            onExpansionChanged: (expanded) {
+              setState(() {
+                if (expanded) {
+                  myColor = AppColors.first;
+                } else {
+                  myColor = AppColors.second;
+                }
+              });
+            },
+            leading: Icon(
+              widget.sectionIcon,
+              size: Sizes.lineSectionIconSize,
+              color: myColor,
+            ),
+            title: Text(
+              widget.sectionName,
+              style: TextStyle(fontSize:Sizes.lineSectionFontSize, color: myColor),
+            ),
+            backgroundColor: AppColors.expandBackground,
+            children: <Widget>[widget.child],
+          ),
+        ));
   }
 }

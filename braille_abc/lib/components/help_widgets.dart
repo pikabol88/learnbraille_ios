@@ -1,124 +1,117 @@
-import 'package:braille_abc/models/help_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import '../style.dart';
-import 'expansion_section_widget.dart';
 
-class MainMenuHelp extends StatelessWidget {
-  const MainMenuHelp({
-    Key key,
-  }) : super(key: key);
+import 'package:braille_abc/models/app_icons.dart';
+import 'package:braille_abc/models/app_names.dart';
+import 'package:braille_abc/models/help_model.dart';
+import 'package:braille_abc/style.dart';
+import 'package:braille_abc/components/expansion_section_widget.dart';
+import 'package:braille_abc/models/screen_model.dart';
 
-  @override
-  Widget build(BuildContext context) {
-    return Column(children: [
-      Html(
-        data: HelpModel.helpSection['Главное меню'].description,
-        defaultTextStyle: Styles.helpTextStyle(),
-      ),
-      for (int i = 0; i < HelpModel.helpSection['Главное меню'].content.length; i++)
-        ExpansionSection(
-          sectionIcon: CupertinoIcons.bars,
-          sectionName: HelpModel.helpSection['Главное меню'].content[i].name,
-          child: Html(
-              data: HelpModel.helpSection['Главное меню'].content[i].description,
-              defaultTextStyle:Styles.helpTextStyle()),
-        )
-    ]);
-  }
+
+enum HelpSections {
+  General,
+  MainMenu,
+  Practice,
+  LetterPractice,
+  Dictionary,
+  LetterView,
+  PracticeResult,
 }
 
-class GeneralHelp extends StatelessWidget {
-  const GeneralHelp({
+@immutable
+class Help extends Screen {
+  const Help({
     Key key,
+    @required this.helpName,
   }) : super(key: key);
+
+  final HelpSections helpName;
 
   @override
   Widget build(BuildContext context) {
-    List<IconData> subIcon = [CupertinoIcons.back, CupertinoIcons.question_circle];
-    return ExpansionSection(
-      color: Colors.orangeAccent,
-      sectionIcon: CupertinoIcons.info,
-      sectionName: HelpModel.helpSection['Общая справка'].name,
-      child: Column(
-        children: [
-          Html(
-            data: HelpModel.helpSection['Общая справка'].description,
-            defaultTextStyle: Styles.helpTextStyle(),
-          ),
-          for (int i = 0; i < HelpModel.helpSection['Общая справка'].content.length; i++)
-            ExpansionSection(
-              sectionIcon: subIcon[i],
-              sectionName: HelpModel.helpSection['Общая справка'].content[i].name,
-              child: Html(
-                  data: HelpModel.helpSection['Общая справка'].content[i].description,
-                  defaultTextStyle:Styles.helpTextStyle()),
-            )
-        ],
-      ),
-    );
+    switch (helpName) {
+      case HelpSections.General:
+        List<IconData> subIcon = [AppIcon.getIcon(AppIcons.BackButton), AppIcon.getIcon(AppIcons.HelpScreen)];
+        return ExpansionSection(
+            color: AppColors.first,
+            sectionIcon: AppIcon.getIcon(AppIcons.GeneralHelpInHelpScreen),
+            sectionName: HelpModel.helpSection[XmlNames.getName(XmlItemType.GeneralHelp)].name,
+            child: buildHelp(subIcon, XmlNames.getName(XmlItemType.GeneralHelp)));
+
+      case HelpSections.MainMenu:
+        List<IconData> subIcon = [AppIcon.getIcon(AppIcons.MenuScreen)];
+        return buildHelp(subIcon, XmlNames.getName(XmlItemType.MainMenu));
+
+      case HelpSections.Practice:
+        List<IconData> subIcon = [
+          AppIcon.getIcon(AppIcons.PracticeScreen),
+          AppIcon.getIcon(AppIcons.ContinueButton),
+        ];
+        return buildHelp(subIcon, XmlNames.getName(XmlItemType.PracticeSections));
+
+      case HelpSections.LetterPractice:
+        List<IconData> subIcon = [
+          AppIcon.getIcon(AppIcons.PracticeScreen),
+          AppIcon.getIcon(AppIcons.TipButton),
+          AppIcon.getIcon(AppIcons.ChangeModeButton),
+          AppIcon.getIcon(AppIcons.NextStep),
+        ];
+        return buildHelp(subIcon, ScreenNames.getName(ScreenType.Practice));
+
+      case HelpSections.Dictionary:
+        List<IconData> subIcon = [
+          AppIcon.getIcon(AppIcons.DictionaryScreen),
+        ];
+        return buildHelp(subIcon, XmlNames.getName(XmlItemType.Alphabet));
+
+      case HelpSections.LetterView:
+        List<IconData> subIcon = [
+          AppIcon.getIcon(AppIcons.DictionaryScreen),
+          AppIcon.getIcon(AppIcons.ChangeModeButton),
+        ];
+        return buildHelp(subIcon, XmlNames.getName(XmlItemType.SymbolView));
+
+      case  HelpSections.PracticeResult:
+        List<IconData> subIcon = [
+          AppIcon.getIcon(AppIcons.PracticeScreen),
+          AppIcon.getIcon(AppIcons.BackButton),
+        ];
+        return buildHelp(subIcon, XmlNames.getName(XmlItemType.PracticeResult));
+      default:
+        return null;
+    }
   }
-}
 
-class DictionaryHelp extends StatelessWidget {
-  const DictionaryHelp({
-    Key key,
-  }) : super(key: key);
 
-  @override
-  Widget build(BuildContext context) {
-    return Column(children: [
-      Html(
-        data: HelpModel.helpSection['Алфавит'].description,
-        defaultTextStyle: Styles.helpTextStyle(),
-      ),
-      for (int i = 0; i < HelpModel.helpSection['Алфавит'].content.length; i++)
-        ExpansionSection(
-          sectionIcon: CupertinoIcons.textformat,
-          sectionName: HelpModel.helpSection['Алфавит'].content[i].name,
-          child: Html(
-              data: HelpModel.helpSection['Алфавит'].content[i].description, defaultTextStyle: Styles.helpTextStyle()),
-        )
-    ]);
-  }
-}
-
-class LetterViewHelp extends StatelessWidget {
-  const LetterViewHelp({
-    Key key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    List<IconData> subIcon = [
-      CupertinoIcons.arrow_right_arrow_left,
-    ];
+  Column buildHelp(List<IconData> subIcon, String helpPage, {bool general = false}) {
     return Column(
       children: [
         Html(
-          data: HelpModel.helpSection['Просмотр символа'].description,
+          data: HelpModel.helpSection[helpPage].description,
           defaultTextStyle: Styles.helpTextStyle(),
         ),
-        for (int i = 0; i < HelpModel.helpSection['Просмотр символа'].content.length; i++)
+        for (int i = 0; i < HelpModel.helpSection[helpPage].content.length; i++)
           ExpansionSection(
-            color: Colors.orangeAccent,
-            sectionIcon: CupertinoIcons.circle_grid_3x3_fill,
-            sectionName: HelpModel.helpSection['Просмотр символа'].content[i].name,
+            color: AppColors.first,
+            sectionIcon: subIcon[i],
+            sectionName: HelpModel.helpSection[helpPage].content[i].name,
             child: Column(
               children: [
                 Html(
-                  data: HelpModel.helpSection['Просмотр символа'].content[i].description,
+                  data: HelpModel.helpSection[helpPage].content[i].description,
                   defaultTextStyle: Styles.helpTextStyle(),
                 ),
-                for (int j = 0; j < HelpModel.helpSection['Просмотр символа'].content[i].content.length; j++)
-                  ExpansionSection(
-                    sectionIcon: subIcon[j],
-                    sectionName: HelpModel.helpSection['Просмотр символа'].content[i].content[j].name,
-                    child: Html(
-                        data: HelpModel.helpSection['Просмотр символа'].content[i].content[i].description,
-                        defaultTextStyle: Styles.helpTextStyle()),
-                  )
+                if (HelpModel.helpSection[helpPage].content[i].content != null)
+                  for (int j = 0; j < HelpModel.helpSection[helpPage].content[i].content.length; j++)
+                    ExpansionSection(
+                      sectionIcon: subIcon[i+j + 1],
+                      sectionName: HelpModel.helpSection[helpPage].content[i].content[j].name,
+                      child: Html(
+                          data: HelpModel.helpSection[helpPage].content[i].content[i].description,
+                          defaultTextStyle: Styles.helpTextStyle()),
+                    )
               ],
             ),
           ),

@@ -1,15 +1,19 @@
+import 'dart:ui';
+
+import 'package:braille_abc/models/app_names.dart';
+import 'package:braille_abc/style.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'struct_symbol.dart';
-import 'list_symbols.dart';
-
+import 'package:braille_abc/symbol/struct_symbol.dart';
+import 'package:braille_abc/symbol/list_symbols.dart';
+import 'package:braille_abc/models/practice_model.dart';
 
 class SymbolWidget extends StatefulWidget {
   final double width;
   final double height;
   final String char;
-  final String dictSection;
+  final SectionType dictSection;
   final bool isTapped;
   final TextDirection Function() textDir;
 
@@ -26,66 +30,100 @@ class SymbolWidget extends StatefulWidget {
   }
 
   @override
-  _SymbolState createState() => _SymbolState(char: char, dictSection: dictSection);
+  _SymbolState createState() => _SymbolState(char: char, section: dictSection);
 }
 
 class _SymbolState extends State<SymbolWidget> {
   Symbol symbol;
+  bool lastIsTapped;
+  final String char;
+  final SectionType section;
 
-  _SymbolState({String char, String dictSection}) {
-    symbol = Search.element(char, dictSection);
+  _SymbolState({@required this.char, @required this.section});
+
+  @override
+  void initState(){
+    super.initState();
+    if(!widget.isTapped) {
+      symbol = Search.element(char, section);
+    }
+    else {
+      symbol = Symbol.defaultSymbol();
+    }
+    lastIsTapped = widget.isTapped;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Stack(
-        textDirection: widget.textDir(),
-        children: <Widget>[
-          Container(
-            height: widget.height,
-            width: widget.width,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              color: Colors.orange[300],
-            ),
-            child: Wrap(
-              alignment: WrapAlignment.center,
-              runAlignment: WrapAlignment.center,
-              textDirection: widget.textDir(),
-              spacing: 0,
-              direction: Axis.vertical,
-              runSpacing: 30,
-              children: symbol.dots
-                  .map((item) => Semantics(
-                        label: "Точка" + item.outputData + (item.press ? "закрашена" : "не закрашена"),
-                        button: false,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            if (widget.isTapped) {
-                              setState(() {
-                                item.p = (item.press ? CupertinoColors.black : CupertinoColors.white);
-                                item.onP = (item.press ? CupertinoColors.white : CupertinoColors.black);
-                                item.press = !item.press;
-                              });
-                            }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            primary: item.p,
-                            onPrimary: item.onP,
-                            shape: CircleBorder(),
-                            side: BorderSide(width: 10, color: CupertinoColors.black),
-                            padding: EdgeInsets.all(20),
-                          ),
-                          child: Text(item.outputData,
-                              textDirection: TextDirection.ltr, style: TextStyle(fontSize: 0.3 * widget.width)),
-                        ),
-                      ))
-                  .toList(growable: false),
-            ),
+    if(lastIsTapped != widget.isTapped) {
+      if (!widget.isTapped) {
+        symbol = Search.element(char, section);
+      }
+      else {
+        symbol = Symbol.defaultSymbol();
+      }
+      lastIsTapped = widget.isTapped;
+    }
+
+    return Stack(
+      textDirection: widget.textDir(),
+      children: <Widget>[
+        Container(
+          height: widget.height,
+          width: widget.width,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(25),
+            color: AppColors.first,
           ),
-        ],
-      ),
+          child: Wrap(
+            alignment: WrapAlignment.center,
+            runAlignment: WrapAlignment.center,
+            textDirection: widget.textDir(),
+            spacing: 55.0 / 667 * widget.height,
+            direction: Axis.vertical,
+            runSpacing: 45.0 / 667 * widget.height,
+            children: symbol.dots
+                .map((item) => Semantics(
+              label: SemanticNames.getName(SemanticsType.Dot) +
+                  item.outputData +
+                  (item.press
+                      ? SemanticNames.getName(SemanticsType.Painted)
+                      : SemanticNames.getName(SemanticsType.NotPainted)),
+              button: false,
+              child: ExcludeSemantics(
+                child: Container(
+                  height: 75.0 / 330 * widget.height,//all proportions are relative to height and width of widget
+                  width: 75.0 / 330 * widget.height,//proportions are made as on the layout: https://www.figma.com/file/pJE5TUjBKvdy2ZmpMnHAS4/Практика
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: AppColors.dotBoarder,
+                      width: 8,
+                    ),
+                  ),
+                  child: CupertinoButton(
+                    onPressed: () {
+                      if (widget.isTapped) {
+                        setState(() {
+                          item.setIsPressed(!item.press);
+                          PracticeResults.dotClick(int.parse(item.outputData));
+                        });
+                      }
+                    },
+                    borderRadius: BorderRadius.all(Radius.circular(1000),),
+                    padding: EdgeInsets.zero,
+                    color: item.p,
+                    child: Text(item.outputData,
+                        textDirection: TextDirection.ltr,
+                        style: TextStyle(fontSize: 0.18 * widget.height - 8 / 330 * widget.height, color: item.onP, fontWeight: FontWeight.bold)),
+                  ),
+                ),
+              )
+            ))
+                .toList(growable: false),
+          ),
+        ),
+      ],
     );
   }
 }

@@ -1,10 +1,12 @@
-import 'package:braille_abc/models/app_model.dart';
 import 'package:flutter/cupertino.dart';
 
+import 'package:braille_abc/models/app_model.dart';
+
+@immutable
 class Body extends StatefulWidget {
   final int index;
 
-  Body(this.index);
+  const Body(this.index);
 
   @override
   _BodyState createState() => _BodyState();
@@ -13,6 +15,6 @@ class Body extends StatefulWidget {
 class _BodyState extends State<Body> {
   @override
   Widget build(BuildContext context) {
-    return AppModel.screens[widget.index];
+    return AppModel.navigationScreens[navigation.values[widget.index]];
   }
 }
